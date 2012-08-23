@@ -2,14 +2,14 @@ window.onload = function() {
 	// start crafty
 	var cellSize=10;
 	
-	Crafty.init(400, 400);
+	Crafty.init(401, 401);
 	//Crafty.HashMap(cellSize);
-	Crafty.background("#000");
+	Crafty.background("#ccc");
 
 	Crafty.c('Grid', {
         _cellSize: cellSize,
-        Grid: function(cellSize) {
-            if(cellSize) this._cellSize = cellSize;
+        Grid: function(cs) {
+            if(cs) this._cellSize = cs;
             return this;
         },
         col: function(col) {
@@ -39,9 +39,13 @@ window.onload = function() {
 			var cell=Crafty.e("Cell,2D,DOM,Color,Grid")
 				.origin(cellSize/2,cellSize/2)
 				.color("#ffffff")
-				.attr({x:i*cellSize,y:j*cellSize,w:cellSize-1,h:cellSize-1});
-			console.log(cell.col()+":"+cell.row());
+				.attr({x:1+i*cellSize,y:1+j*cellSize,w:cellSize-1,h:cellSize-1,z:1});
+			//console.log(cell.col()+":"+cell.row());
 		}
 
 	}
+	
+	var ant=Crafty.e("Ant,Grid").attr({x:100,y:100,z:1000});
+	
+	console.log(ant.col()+":"+ant.row()+":"+ant.isPlaying("antRunning"));
 };
