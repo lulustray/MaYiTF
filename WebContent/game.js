@@ -1,6 +1,6 @@
 window.onload = function() {
 	// start crafty
-	var cellSize=10;
+	var cellSize=20;
 	
 	Crafty.init(401, 401);
 	//Crafty.HashMap(cellSize);
@@ -40,12 +40,15 @@ window.onload = function() {
 				.origin(cellSize/2,cellSize/2)
 				.color("#ffffff")
 				.attr({x:1+i*cellSize,y:1+j*cellSize,w:cellSize-1,h:cellSize-1,z:1});
-			//console.log(cell.col()+":"+cell.row());
 		}
-
 	}
+	
+	
 	
 	var ant=Crafty.e("Ant,Grid").attr({x:100,y:100,z:1000});
 	
-	console.log(ant.col()+":"+ant.row()+":"+ant.isPlaying("antRunning"));
+	Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e){
+		var pos = Crafty.DOM.translate(e.clientX, e.clientY);
+		ant.moveTo(pos.x,pos.y);
+	});
 };
