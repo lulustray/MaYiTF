@@ -1,54 +1,63 @@
 window.onload = function() {
 	// start crafty
 	var cellSize=20;
-	
-	Crafty.init(401, 401);
+	var mapWidth=400;
+	var mapHeight=600;
+	Crafty.init(mapWidth, mapHeight);
 	//Crafty.HashMap(cellSize);
-	Crafty.background("#ccc");
+	Crafty.background("#000");
 
-	Crafty.c('Grid', {
-        _cellSize: cellSize,
-        Grid: function(cs) {
-            if(cs) this._cellSize = cs;
-            return this;
-        },
-        col: function(col) {
-            if(arguments.length === 1) {
-                this.x = this._cellSize * col;
-                return this;
-            } else {
-                return Math.round(this.x / this._cellSize);
-            }
-        },
-        row: function(row) {
-            if(arguments.length === 1) {
-                this.y = this._cellSize * row;
-                return this;
-            } else {
-                return Math.round(this.y / this._cellSize);
-            }
-        },      
-        snap: function(){
-            this.x = Math.round(this.x/this._cellSize) * this._cellSize;
-            this.y = Math.round(this.y/this._cellSize) * this._cellSize;
-        }
-    });
 	
-	for ( var i = 0; i < 400/cellSize; i++) {
-		for ( var j = 0; j < 400/cellSize; j++) {
-			var cell=Crafty.e("Cell,2D,DOM,Color,Grid")
+	var food=Crafty.e("Food").attr({x:200,y:0,z:1001});
+	var lair=Crafty.e("Lair").attr({x:200,y:580,z:1001});
+	
+	var cells=[];
+	for ( var i = 0; i < mapWidth/cellSize; i++) {
+		var line=[];
+		cells.push(line);
+		for ( var j = 0; j < mapHeight/cellSize; j++) {
+			var cell=Crafty.e("MapCell")
 				.origin(cellSize/2,cellSize/2)
-				.color("#ffffff")
-				.attr({x:1+i*cellSize,y:1+j*cellSize,w:cellSize-1,h:cellSize-1,z:1});
+				.attr({x:i*cellSize,y:j*cellSize,w:cellSize,h:cellSize,z:1});
+			line.push(cell);
+			var distance=Crafty.math.distance(cell.centerX(),cell.centerY(),food.centerX(),food.centerY());
+			if(distance<=120){
+				cell.fseg=(120-distance)/120;
+			}
+			distance=Crafty.math.distance(cell.centerX(),cell.centerY(),lair.centerX(),lair.centerY());
+			if(distance<=120){
+				cell.lseg=(120-distance)/120;
+			}
 		}
 	}
 	
 	
 	
-	var ant=Crafty.e("Ant,Grid").attr({x:100,y:100,z:1000});
+	var ant=Crafty.e("Ant")
+				.attr({x:200,y:580,z:1000})
+				.grid(cellSize,mapWidth,mapHeight)
+				.setMap(cells).run();
+	for ( var i = 0; i < 10; i++) {
+		Crafty.e("Ant")
+		.attr({x:200,y:560,z:1000})
+		.grid(cellSize,mapWidth,mapHeight)
+		.setMap(cells).run();
+	}
+	
 	
 	Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e){
 		var pos = Crafty.DOM.translate(e.clientX, e.clientY);
 		ant.moveTo(pos.x,pos.y);
 	});
+	
+//	Crafty.e("2D,DOM,Color,Solid").attr({x:0,y:-20,w:400,h:20,z:1001}).color("#f00");
+//	
+//	Crafty.e("2D,DOM,Color,Solid").attr({x:-20,y:0,w:20,h:400,z:1001}).color("#f00");
+//	
+//	Crafty.e("2D,DOM,Color,Solid").attr({x:0,y:400,w:400,h:20,z:1001}).color("#f00");
+//	
+//	Crafty.e("2D,DOM,Color,Solid").attr({x:400,y:0,w:20,h:400,z:1001}).color("#f00");
+	
+	//Crafty.e("Fort,Grid").attr({z:1001});
+	
 };
